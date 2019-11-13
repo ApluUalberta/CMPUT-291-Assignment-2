@@ -1,0 +1,19 @@
+select u.name, p.title
+from users u, papers p, reviews r
+where  (p.id = r.paper)
+and (u.email = r.reviewer)
+group by u.name, p.title
+
+union 
+
+select u.name, NULL
+from users u
+group by u.name, NULL
+
+except
+
+select u.name, null
+from users u, papers p, reviews r
+where  (p.id = r.paper)
+and (u.email = r.reviewer)
+group by u.name, p.title

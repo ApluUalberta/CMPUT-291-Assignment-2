@@ -1,0 +1,11 @@
+.print Question 6 -Aplu
+
+select p.area, r.reviewer, u.name
+from papers p, reviews r, users u
+where p.area in (select  p.area
+		  from   reviews r, papers p
+   		 where  p.id = r.paper
+		group by p.area
+		having avg(r.overall) > 4)
+and p.id = r.paper
+and r.reviewer = u.email

@@ -1,0 +1,3 @@
+select p.author, count(distinct p.csession)
+from Papers p
+GROUP BY p.author

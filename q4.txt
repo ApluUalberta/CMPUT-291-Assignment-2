@@ -1,0 +1,17 @@
+select p.author, s.name, 0
+from Papers p, sessions s
+Group By p.author, s.name
+
+union 
+
+select p.author, p.csession, count(p.id)
+from Papers p
+Group By p.author, p.csession
+Having p.decision = 'A'
+
+except 
+
+select p.author, p.csession, 0
+from Papers p
+Group By p.author, p.csession
+Having p.decision = 'A'

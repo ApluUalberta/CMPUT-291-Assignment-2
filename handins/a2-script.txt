@@ -1,0 +1,184 @@
+--Question 1
+.print Question 1 - Aplu
+Question 1 - Aplu
+select count(p.id)
+from papers p
+where p.decision = 'A'
+Group by area;
+2
+2
+
+
+--Question 2
+.print Question 2 -Aplu
+Question 2 -Aplu
+select p.author, count(distinct p.csession)
+from Papers p
+where p.decision = 'A'
+GROUP BY p.author;
+Harry@Email|2
+Ron@Email|1
+
+
+--Question 3
+.print Question 3 -Aplu
+Question 3 -Aplu
+select p.author, p.csession, count(p.id)
+from Papers p
+Group By p.author, p.csession
+Having p.decision = 'A';
+Harry@Email|DB|2
+Harry@Email|SE|1
+Ron@Email|SE|1
+
+
+--Question 4
+.print Question 4 -Aplu
+Question 4 -Aplu
+
+select p.author, s.name, 0
+from Papers p, sessions s
+Group By p.author, s.name
+
+union 
+
+select p.author, p.csession, count(p.id)
+from Papers p
+Group By p.author, p.csession
+Having p.decision = 'A'
+
+except 
+
+select p.author, p.csession, 0
+from Papers p
+Group By p.author, p.csession
+Having p.decision = 'A';
+Harry@Email|DB|2
+Harry@Email|SE|1
+Hermoine@Email|DB|0
+Hermoine@Email|SE|0
+Ron@Email|DB|0
+Ron@Email|SE|1
+Snape@Email|DB|0
+Snape@Email|SE|0
+
+
+--Question 5
+.print Question 5 -Aplu
+Question 5 -Aplu
+select distinct p.title 
+from papers p, reviews r
+where (p.id = r.paper)
+and (overall > (r.originality + r.soundness + r.importance)/3);
+Bass players are undervalued big time
+System of a Down rocks!
+Donald was not always been a duck
+Mickey and Anakin are bothers
+
+
+--Question 6
+.print Question 6 -Aplu
+Question 6 -Aplu
+
+select p.area, r.reviewer, u.name
+from papers p, reviews r, users u
+where p.area in (select  p.area
+		  from   reviews r, papers p
+   		 where  p.id = r.paper
+		group by p.area
+		having avg(r.overall) > 4)
+and p.id = r.paper
+and r.reviewer = u.email;
+DB|Minnie@Email|Minnie
+DB|Donald@Email|Donald
+DB|Mickey@Email|Mickey
+
+
+--Question 7
+.print Question 7 -Aplu
+Question 7 -Aplu
+
+select u.name, p.title
+from users u, papers p, reviews r
+where  (p.id = r.paper)
+and (u.email = r.reviewer)
+group by u.name, p.title
+
+union 
+
+select u.name, NULL
+from users u
+group by u.name, NULL
+
+except
+
+select u.name, null
+from users u, papers p, reviews r
+where  (p.id = r.paper)
+and (u.email = r.reviewer)
+group by u.name, p.title;
+Albus|
+Anakin|Donald was not always been a duck
+Anakin|Three moons are better than one
+C3P0|Mickey and Anakin are bothers
+Darth|Donald was not always been a duck
+Darth|Three moons are better than one
+Donald|Bass players are undervalued big time
+Donald|System of a Down rocks!
+Harry|
+Hermoine|
+Jerry|
+Mickey|Bass players are undervalued big time
+Mickey|System of a Down rocks!
+Minnie|Bass players are undervalued big time
+Minnie|System of a Down rocks!
+Pluto|Donald was not always been a duck
+Pluto|Three moons are better than one
+R2D2|Mickey and Anakin are bothers
+Ron|
+Snape|
+Tom|Mickey and Anakin are bothers
+
+
+--Question 8
+.print Question 8 -Aplu
+Question 8 -Aplu
+select a.name
+from areas a
+
+except
+select distinct area as name
+from(select *
+      from expertise e2
+
+      except
+
+      select e.area, e. reviewer
+	from expertise e
+	where	2 = (select count(r.paper)
+		       from reviews r
+		      where (e.reviewer = r.reviewer)))
+
+except
+
+select na.name
+from areas na
+where not exists (select enew.area
+		   from expertise enew
+		  where na.name = enew.area);
+DB
+
+
+--Question 9
+.print Question 9 -Aplu
+Question 9 -Aplu
+select p1.area
+from reviews r, papers p1
+where p1.id = r.paper
+group by p1.area
+having avg(r.originality) in (select max(computed_averages)
+				from (select avg(r.originality) as computed_averages
+				     from reviews r, papers p
+				     where p.id = r.paper
+				     group by p.area));
+DB
